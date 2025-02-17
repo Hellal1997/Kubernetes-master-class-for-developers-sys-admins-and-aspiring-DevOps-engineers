@@ -1,0 +1,41 @@
+# LAB creating a pod with probes, resources , and volumes 
+
+### Prepare the NFS server:
+sudo apt update
+
+sudo apt install nfs-kernel-server -y
+
+sudo mkdir -p /mnt/shared
+
+sudo chown nobody:nogroup /mnt/shared
+
+sudo chmod 777 /mnt/shared
+
+sudo vim /etc/exports
+
+### The /etc/exports file should like as follows:
+/mnt/shared *(rw,no_root_squash,insecure,sync,no_subtree_check)
+
+### Start and enable the service:
+sudo exportfs -a
+
+sudo systemctl start nfs-kernel-server
+
+sudo systemctl enable nfs-kernel-server
+
+### Write the following pod manifest:
+
+
+### Tests:
+
+    Get the running pods kubectl get pods and make sure that they are running and ready.
+
+    Login to the main-container:
+
+    kubectl exec -it demo -c main-container -- sh
+
+###     Create a test file under /mnt/nfs in the Nginx container. Exit the container view the file from the host under /mnt/shared, which is the NFS share.
+
+    View the busybox container logs:
+    kubectl logs -f demo -c sidecar-container
+    
