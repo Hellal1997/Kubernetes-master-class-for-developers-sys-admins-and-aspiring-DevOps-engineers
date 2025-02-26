@@ -1,0 +1,89 @@
+The LoadBalancer on bare metal lab
+
+The cluster has MetalLB already installed. You can refer to this URL for installing it on your own cluster: https://metallb.universe.tf/installation/
+
+Create a service manifest like this:
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+
+  name: web-service
+
+spec:
+
+  selector:
+
+    app: web-app # pointing to the same pod that we already have
+
+  ports:
+
+    - protocol: TCP
+
+      port: 80
+
+      targetPort: 80
+
+  type: LoadBalancer
+
+Make sure we have the service running of type load balancer:
+
+kubectl get svc
+
+The LoadBalancer on the cloud lab
+
+    Create a cluster on AWS (1 worker node) and configure the KUBEONFIG file to point to it (internal)
+
+    List the nodes to make sure that we are on the correct cluster: kubectl get nodes.
+
+    Create the same pods that we used in the previous lab.
+
+    Create a Service of type load balancer and try to access it (use the same service manifest as the above)
+
+The External Service on the cloud
+
+    Create a virtual machine on AWS.
+
+    Create a Service with no selectors:
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+
+  name: my-service
+
+spec:
+
+  ports:
+
+    - name: ssh
+
+      protocol: TCP
+
+      port: 22
+
+      targetPort: 22
+
+    Apply the configuration to the cluster.
+
+    Create an Ubuntu pod:
+
+kubectl run ubuntu --image=ubuntu -it --rm -- /bin/bash
+
+    Install the SSH client
+
+apt update 
+
+apt install -y ssh-client
+
+    Copy the private key that you created when creating the cluster into ~/.ssh/id_rsa.
+
+    Try to connect to the virtual machine through the service:
+
+ssh ec2-user@my-service
+
+ 
